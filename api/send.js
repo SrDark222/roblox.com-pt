@@ -28,10 +28,14 @@ export default async function handler(req) {
       body: JSON.stringify(payload),
     });
 
-    if (!resp.ok) throw new Error("Falha no envio do webhook");
+    if (!resp.ok) {
+      console.error("Erro no webhook:", await resp.text());
+      throw new Error("Falha no envio do webhook");
+    }
 
     return new Response("Enviado com sucesso!", { status: 200 });
   } catch (e) {
+    console.error("Erro API:", e);
     return new Response(`Erro: ${e.message}`, { status: 500 });
   }
 }
