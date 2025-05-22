@@ -1,0 +1,11 @@
+{
+  "name": "roblox-web",
+  "version": "0.0.1",
+  "description": "Roblox web client",
+  "main": "api/send.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "author": "Roblox Corporation",
+  "license": "MIT"
+}
